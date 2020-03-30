@@ -14,6 +14,27 @@
             $this->password ="";
         }
 
+        public static function getAll(PDO $conn) {
+            $sql = "SELECT * FROM `Users`";
+            $stmt = $conn->prepare($sql);
+            $result = $stmt->execute();
+            $data = [];
+            if($result && $stmt->rowCount() > 0) {
+                $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($records as $record) {
+                    $user = new User();
+                    $user->setId($record['id']);
+                    $user->setEmail($record['email']);
+                    $user->setName($record['name']);
+                    $user->setPassword($record['password']);
+                    $data[$record['id']] = $user;
+                }
+            }
+
+            return $data;
+
+        }
+
         public static function getByEmail(PDO $conn, string $email) {
             $sql = "SELECT * FROM `Users` WHERE `email` = :email";
             $stmt = $conn->prepare($sql);
